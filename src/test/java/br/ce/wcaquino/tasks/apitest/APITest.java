@@ -3,9 +3,9 @@ package br.ce.wcaquino.tasks.apitest;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.CoreMatchers.*;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import io.restassured.http.ContentType;
 
 public class APITest {
@@ -53,6 +53,30 @@ public class APITest {
 			.statusCode(400)
 			.body("message", is("Due date must not be in past"))
 		;
+	}
+	
+	@Test
+	public void deveRemoverTarefaComSucesso(){
+		
+		//inserir tarefa
+		Integer id = given()
+		.body("{\"task\": \"Tarefa para remoção\",\"dueDate\": \"2020-08-30\"}")
+		.contentType(ContentType.JSON)
+	.when()
+		.post("/todo")
+	.then()
+		.log().all()
+		.statusCode(201)
+		.extract().path("id")
+	;
+		//deletar tarefa
+		given()
+	.when()
+		.delete("/todo/"+id)
+	.then()
+		.log().all()
+		.statusCode(204)
+	;
 	}
 }
 
